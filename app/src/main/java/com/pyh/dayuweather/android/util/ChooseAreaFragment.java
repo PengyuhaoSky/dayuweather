@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pyh.dayuweather.android.MainActivity;
 import com.pyh.dayuweather.android.R;
 import com.pyh.dayuweather.android.WeatherActivity;
 import com.pyh.dayuweather.android.db.City;
@@ -92,10 +93,19 @@ public class ChooseAreaFragment extends Fragment{
                     queryCounties();
                 }   else if (currentLevel == LEVEL_COUNTY){
                     String weatherId = countyList.get(position).getWeatherId();
+                    if (getActivity() instanceof MainActivity) {//instanceof可以用来判断一个对象是否属于某个类的实例
+                        //如果在  MainActivity中
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
                         intent.putExtra("weather_id", weatherId);
                         startActivity(intent);
                         getActivity().finish();
+                    }   else if (getActivity() instanceof WeatherActivity){
+                        //如果在 WeatherActivity 中
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
